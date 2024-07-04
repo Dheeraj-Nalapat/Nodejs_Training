@@ -1,14 +1,20 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { Response, Request } from "express";
-import { employeeRouter } from "./employeeRouter";
-import loggerMiddleware from "./loggerMiddleware";
-import dataSource from "./data-source";
+import employeeRouter from "./routes/employee.routes";
+import loggerMiddleware from "./middleware/logger.middleware";
+import dataSource from "./db/data-source.db";
+import { error } from "console";
+import { request } from "http";
+import HttpException from "./exceptions/http.exceptions";
+import errorMiddleware from "./middleware/error.middleware";
 const server = express();
 
 server.use(bodyParser.json());
 server.use(loggerMiddleware);
 server.use("/employee", employeeRouter);
+
+server.use(errorMiddleware);
 
 server.get("/", (req: Request, res: Response) => {
   console.log(req.url);
