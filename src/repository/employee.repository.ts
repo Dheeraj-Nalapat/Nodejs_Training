@@ -1,12 +1,13 @@
 import { Repository } from "typeorm";
 import dataSource from "../db/data-source.db";
 import { Employee } from "../entity/employee.entity";
+import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 class EmployeeRepository {
   constructor(private repository: Repository<Employee>) {}
 
   find = async () => {
-    return this.repository.find();
+    return this.repository.find({ relations: ["address"] });
   };
 
   findOneBy = async (filter: Partial<Employee>) => {
@@ -19,9 +20,10 @@ class EmployeeRepository {
 
   update = async (
     filter: Partial<Employee>,
-    employeeUpdates: Partial<Employee>
+    employeeUpdates: QueryDeepPartialEntity<Employee>
   ): Promise<Employee> => {
-    await this.repository.update(filter, employeeUpdates);
+    const as = await this.repository.update(filter, employeeUpdates);
+    console.log(filter);
     return this.findOneBy(filter);
   };
 

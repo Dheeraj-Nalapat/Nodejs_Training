@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test_clear": "jest --clearCache",
+    "test-coverage": "jest --coverage",
     "start-server": "npm run build && node dist/src/app.js",
     "introduction": "echo 'hello my name is Dheeraj'",
     "build": "rm -rf dist/ && tsc",
@@ -17,10 +19,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jest-when": "^3.6.0",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.12.0",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.20",
@@ -29,6 +35,19 @@
   },
   "devDependencies": {
     "@types/express": "4.17.21",
-    "@types/node": "20.14.0"
+    "@types/jest": "^29.5.12",
+    "@types/jest-when": "^3.5.5",
+    "@types/node": "20.14.0",
+    "ts-jest": "^29.1.5"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(t)s$": "ts-jest"
+    },
+    "verbose": true,
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.ts",
+      "!**/index.ts"
+    ]
   }
 }

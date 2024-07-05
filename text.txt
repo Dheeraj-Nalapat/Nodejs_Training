@@ -1,0 +1,36 @@
+call           controller               services                repository          
+===========================================================================================================================
+
+get            getAllEmployees          getAllEmployees         find 
+<+>            <+>                      <+>                     <+>            
+getbyid        getEmployeeById          getEmployeeById         findOneBy
+<+>            <+>                      <+>                     <+>
+post           createEmployee           createEmployee          save
+<+>            <+>                      <+>                     <+>
+put            updateEmployee           updateEmployee          update
+<+>            <+>                      <+>                     <+>
+patch          updateEmployee           updateEmployee          update
+<+>            <+>                      <+>                     <+>
+delete         deleteEmployee           deleteEmployee          softDelete
+<+>            <+>                      <+>                     <+>
+
+- error handling in delete 
+- updateEmployee does not update address (then make 2 functions for put and patch)
+
+
+[{
+    "target": {
+        "name": "jane Foster",
+        "email": "janefostergmail.com"
+        "age":23,
+        "address":{
+            "line1":"north lane",
+            "pincode":"123142"
+        }
+    }
+    "value": "janefostergmail",
+    "property": "email"
+    "children": [],
+    "constraints":{"isEmail" : "email must be an email"
+    }
+}]

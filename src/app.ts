@@ -9,11 +9,12 @@ import { request } from "http";
 import HttpException from "./exceptions/http.exceptions";
 import errorMiddleware from "./middleware/error.middleware";
 const server = express();
+import dotenv from "dotenv";
+dotenv.config();
 
 server.use(bodyParser.json());
 server.use(loggerMiddleware);
 server.use("/employee", employeeRouter);
-
 server.use(errorMiddleware);
 
 server.get("/", (req: Request, res: Response) => {
