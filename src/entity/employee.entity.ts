@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   OneToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
@@ -11,6 +12,7 @@ import {
 import AbstractEntity from "./abstract-entity";
 import Address from "./address.entity";
 import { Role } from "../utils/role.enum";
+import Department from "./department.entity";
 
 @Entity()
 class Employee extends AbstractEntity {
@@ -34,6 +36,9 @@ class Employee extends AbstractEntity {
     onDelete: "CASCADE",
   })
   address: Address;
+
+  @ManyToOne(() => Department, (department) => department.employee)
+  department: Department;
 }
 
 export { Employee };

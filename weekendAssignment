@@ -1,0 +1,36 @@
+Employee-Department
+
+ 1. Create an entity for Department - id, name, date columns and a one to many relation with the employee entity - <DONE>
+ ============================
+ 
+ 2. Generate the required migration and run it and check that the table is properly created -<DONE>
+ ============================
+ 
+ 3. Define CRUD Operations for department and follow the proper folder structure.
+ 
+ 4. For department update/create, the core logic is to add or update employees to it
+ 
+ 5. Add Error Handling and Data Validation for all APIs
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 1.Department CRUD APIs: Implement Create, Read, Update, and Delete operations for the Department.
+ 
+ 2.Link Department to Employees: Ensure that while creating and updating employees, the department can be specified. Department deletion should only be possible if no active employees exist in the department.
+
+ 3.API Validation: All APIs should have proper validation mechanisms in place.
+
+ 4.Auth: All APIs should have proper authentication and authorization checks.
+
+ 5.Coding Standards: Follow coding standards including migrations, logging, proper file naming, and structure (as per discussed in the sessions).
+
+ 6.Test Cases: Write test cases for all service functions.
+ 
+ 
+ create department entity -
+ create department dto -
