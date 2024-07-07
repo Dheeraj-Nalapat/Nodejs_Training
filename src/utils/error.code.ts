@@ -15,6 +15,11 @@ export const ErrorCodes: { [key: string]: CustomError } = {
     CODE: "UNAUTHORIZED",
     MESSAGE: "You are not authorized to perform this action",
   },
+  DELETION_CONSTRAINT_ERROR: {
+    CODE: "DELETION_CONSTRAINT_ERROR",
+    MESSAGE:
+      "cannot delete this resource as it is referenced by another resource",
+  },
 };
 
 export interface CustomError {

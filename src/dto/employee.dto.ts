@@ -53,13 +53,20 @@ export class UpdateEmployeeDto {
   name: string;
 
   @IsOptional()
-  @IsNotEmpty()
   @IsString()
   email: string;
 
   @IsOptional()
   @IsNumber()
   age: number;
+
+  @IsOptional()
+  @IsString()
+  password: string;
+
+  @IsOptional()
+  @IsEnum(Role)
+  role: Role;
 
   @IsOptional()
   @ValidateNested({ each: true })

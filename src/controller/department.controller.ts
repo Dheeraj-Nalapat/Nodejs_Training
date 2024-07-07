@@ -11,6 +11,10 @@ import {
 import errorsToJson from "../../errorstojson";
 import { validate } from "class-validator";
 import authorize from "../middleware/authorize.middleware";
+import EntityNotFoundException from "../exceptions/entityNotFound.exception";
+import { ErrorCodes } from "../utils/error.code";
+import dataSource from "../db/data-source.db";
+import Employee from "../entity/employee.entity";
 
 class DepartmentConroller {
   public router: express.Router;
@@ -22,7 +26,7 @@ class DepartmentConroller {
     this.router.get("/:id", this.getDepartmentById);
     this.router.post("/", authorize, this.createDepartment);
     this.router.patch("/:id", authorize, this.updateDepartmentById);
-    this.router.patch("/:id", authorize, this.deleteDepartment);
+    this.router.delete("/:id", authorize, this.deleteDepartment);
   }
 
   public getAllDepartment = async (
@@ -45,11 +49,10 @@ class DepartmentConroller {
       );
 
       if (!department) {
-        const error = new HttpException(
-          404,
-          `No department found with id: ${req.params.id}`
-        );
-        throw error;
+        throw new EntityNotFoundException({
+          CODE: "DEPARTMENT_NOT_FOUND",
+          MESSAGE: "Department not found",
+        });
       }
 
       res.status(200).send(department);
@@ -67,10 +70,7 @@ class DepartmentConroller {
     try {
       const role = req.role;
       if (role != Role.CEO) {
-        throw new HttpException(
-          403,
-          "You are not authorized to create a new department"
-        );
+        throw ErrorCodes.UNAUTHORIZED;
       }
       const departmentDto = plainToInstance(CreateDepartmentDto, req.body);
       const errors = await validate(departmentDto);
@@ -90,11 +90,15 @@ class DepartmentConroller {
   };
 
   public updateDepartmentById = async (
-    req: express.Request,
+    req: RequestWithUser,
     res: express.Response,
     next: express.NextFunction
   ) => {
     try {
+      const role = req.role;
+      if (role != Role.CEO) {
+        throw ErrorCodes.UNAUTHORIZED;
+      }
       const departmentDto = plainToInstance(UpdateDepartmentDto, req.body);
       const errors = await validate(departmentDto);
       if (errors.length) {
@@ -109,8 +113,10 @@ class DepartmentConroller {
           departmentDto.head_id
         );
       if (!updatedDepartment) {
-        const error = new HttpException(404, "Department not found");
-        throw error;
+        throw new EntityNotFoundException({
+          CODE: "DEPARTMENT_NOT_FOUND",
+          MESSAGE: "Department not found",
+        });
       }
       res.status(204).send(updatedDepartment);
     } catch (err) {
@@ -119,26 +125,36 @@ class DepartmentConroller {
   };
 
   public deleteDepartment = async (
-    req: express.Request,
+    req: RequestWithUser,
     res: express.Response,
     next: express.NextFunction
   ) => {
     try {
+      console.log("here");
+      const role = req.role;
+      if (role != Role.CEO) {
+        throw ErrorCodes.UNAUTHORIZED;
+      }
       const departmentId = Number(req.params.id);
       const department = await this.departmentService.getDepartmentById(
         departmentId
       );
 
       if (!department) {
-        const error = new HttpException(
-          404,
-          `No department found with id: ${req.params.id}`
-        );
-        throw error;
+        throw new EntityNotFoundException({
+          CODE: "DEPARTMENT_NOT_FOUND",
+          MESSAGE: "Department not found",
+        });
       }
-      const deletedDepartment = await this.departmentService.deleteDepartment(
-        departmentId
-      );
+
+      const employeeRepository = dataSource.getRepository(Employee);
+      const employees = employeeRepository.findOneBy({ department });
+      if (employees) {
+        throw ErrorCodes.DELETION_CONSTRAINT_ERROR;
+      }
+
+      const deletedDepartment =
+        await this.departmentService.deleteDepartmentById(departmentId);
       res.status(204).send(deletedDepartment);
     } catch (err) {
       console.log(err);

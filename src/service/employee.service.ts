@@ -14,6 +14,7 @@ import jsonwebtoken from "jsonwebtoken";
 import { CustomError, ErrorCodes } from "../utils/error.code";
 import { CreateAddressDto, UpdateAddressDto } from "../dto/address.dto";
 import { CreateDepartmentDto } from "../dto/department.dto";
+import Department from "../entity/department.entity";
 
 class EmployeeService {
   constructor(private employeeRepository: EmployeeRepository) {}
@@ -32,7 +33,8 @@ class EmployeeService {
     age: number,
     password: string,
     role: Role,
-    address: CreateAddressDto
+    address: CreateAddressDto,
+    departmentEntity: Department
   ) => {
     const newEmployee = new Employee();
     newEmployee.name = name;
@@ -40,10 +42,13 @@ class EmployeeService {
     newEmployee.age = age;
     newEmployee.password = password ? await bcrypt.hash(password, 10) : "";
     newEmployee.role = role;
+
     const newAddress = new Address();
     newAddress.line1 = address.line1;
     newAddress.pincode = address.pincode;
     newEmployee.address = newAddress;
+
+    newEmployee.department = departmentEntity;
 
     return this.employeeRepository.save(newEmployee);
   };
@@ -62,15 +67,30 @@ class EmployeeService {
     name: string,
     email: string,
     age: number,
-    address: UpdateAddressDto
+    password: string,
+    role: Role,
+    address: UpdateAddressDto,
+    department?: Department
   ) => {
     const existingEmployee = await this.getEmployeeById(id);
     existingEmployee.name = name;
     existingEmployee.email = email;
     existingEmployee.age = age;
+
+    if (password) {
+      existingEmployee.password = password
+        ? await bcrypt.hash(password, 10)
+        : "";
+    }
+    existingEmployee.role = role;
+
     if (address) {
       existingEmployee.address.line1 = address.line1;
       existingEmployee.address.pincode = address.pincode;
+    }
+
+    if (department) {
+      existingEmployee.department = department;
     }
 
     return this.employeeRepository.save(existingEmployee);

@@ -32,8 +32,7 @@ class DepartmentService {
     return this.departmentRepository.save(existingDepartment);
   };
 
-  deleteDepartment = async (id: number) => {
-    // const employees = await
+  deleteDepartmentById = async (id: number) => {
     return this.departmentRepository.softRemove(id);
   };
 }
