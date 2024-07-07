@@ -1,18 +1,19 @@
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { UpdateEmployeeDto } from "../dto/employee.dto";
 import Address from "../entity/address.entity";
-import { Employee } from "../entity/employee.entity";
+import Employee from "../entity/employee.entity";
 import EmployeeRepository from "../repository/employee.repository";
 import { Role } from "../utils/role.enum";
 import bcrypt from "bcrypt";
 import { error } from "console";
 import IncorrectPasswordException from "../exceptions/incorrectPassword.exception";
-import EntityNotFoundException from "../utils/entityNotFound.exception";
+import EntityNotFoundException from "../exceptions/entityNotFound.exception";
 import { jwtPayload } from "../utils/jwtPayload";
 import { JWT_SECRET, JWT_VALIDITY } from "../utils/constants";
 import jsonwebtoken from "jsonwebtoken";
-import { CustomError } from "../utils/error.code";
-import { UpdateAddressDto } from "../dto/address.dto";
+import { CustomError, ErrorCodes } from "../utils/error.code";
+import { CreateAddressDto, UpdateAddressDto } from "../dto/address.dto";
+import { CreateDepartmentDto } from "../dto/department.dto";
 
 class EmployeeService {
   constructor(private employeeRepository: EmployeeRepository) {}
@@ -31,7 +32,7 @@ class EmployeeService {
     age: number,
     password: string,
     role: Role,
-    address: any
+    address: CreateAddressDto
   ) => {
     const newEmployee = new Employee();
     newEmployee.name = name;
@@ -43,6 +44,7 @@ class EmployeeService {
     newAddress.line1 = address.line1;
     newAddress.pincode = address.pincode;
     newEmployee.address = newAddress;
+
     return this.employeeRepository.save(newEmployee);
   };
 
@@ -82,13 +84,13 @@ class EmployeeService {
     const employee = await this.employeeRepository.findOneBy({ email });
 
     if (!employee) {
-      throw new EntityNotFoundException(CustomError.MESSAGE);
+      throw new EntityNotFoundException(ErrorCodes.EMPLOYEE_WITH_ID_NOT_FOUND);
     }
 
     const result = await bcrypt.compare(password, employee.password);
 
     if (!result) {
-      throw new IncorrectPasswordException(CustomError.MESSAGE);
+      throw new IncorrectPasswordException(ErrorCodes.INCORRECT_PASSWORD);
     }
 
     const payload: jwtPayload = {

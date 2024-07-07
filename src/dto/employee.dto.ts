@@ -12,7 +12,7 @@ import "reflect-metadata";
 import { Type } from "class-transformer";
 import { Role } from "../utils/role.enum";
 import Department from "../entity/department.entity";
-import { CreateDepartment, UpdateDepartment } from "./department.dto";
+import { CreateDepartmentDto, UpdateDepartmentDto } from "./department.dto";
 
 export class CreateEmployeeDto {
   @IsNotEmpty()
@@ -43,8 +43,8 @@ export class CreateEmployeeDto {
 
   @IsNotEmpty()
   @ValidateNested({ each: true })
-  @Type(() => CreateDepartment)
-  department: CreateDepartment;
+  @Type(() => CreateDepartmentDto)
+  department: CreateDepartmentDto;
 }
 
 export class UpdateEmployeeDto {
@@ -68,6 +68,6 @@ export class UpdateEmployeeDto {
 
   @IsOptional()
   @ValidateNested({ each: true })
-  @Type(() => UpdateDepartment)
-  department: UpdateDepartment;
+  @Type(() => UpdateDepartmentDto)
+  department: UpdateDepartmentDto;
 }

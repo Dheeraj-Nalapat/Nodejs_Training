@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import AbstractEntity from "./abstract-entity";
-import { Employee } from "./employee.entity";
+import Employee from "./employee.entity";
 
 @Entity()
 class Address extends AbstractEntity {

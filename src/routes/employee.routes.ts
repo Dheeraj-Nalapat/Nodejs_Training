@@ -1,6 +1,6 @@
 import EmployeeController from "../controller/employee.contoller";
 import dataSource from "../db/data-source.db";
-import { Employee } from "../entity/employee.entity";
+import Employee from "../entity/employee.entity";
 import EmployeeRepository from "../repository/employee.repository";
 import EmployeeService from "../service/employee.service";
 

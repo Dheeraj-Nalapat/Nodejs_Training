@@ -1,9 +1,9 @@
-import HttpException from "../exceptions/http.exceptions";
-import { CustomError } from "./error.code";
+import HttpException from "./http.exceptions";
+import { CustomError } from "../utils/error.code";
 
 class EntityNotFoundException extends HttpException {
   constructor(error: CustomError) {
-    super(404, error);
+    super(404, error.MESSAGE);
   }
 }
 

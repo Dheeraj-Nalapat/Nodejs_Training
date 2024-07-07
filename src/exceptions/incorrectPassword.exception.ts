@@ -3,7 +3,7 @@ import HttpException from "./http.exceptions";
 
 class IncorrectPasswordException extends HttpException {
   constructor(error: CustomError) {
-    super(401, error);
+    super(401, error.MESSAGE);
   }
 }
 

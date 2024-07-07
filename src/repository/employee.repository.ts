@@ -1,17 +1,20 @@
 import { Repository } from "typeorm";
 import dataSource from "../db/data-source.db";
-import { Employee } from "../entity/employee.entity";
+import Employee from "../entity/employee.entity";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 class EmployeeRepository {
   constructor(private repository: Repository<Employee>) {}
 
   find = async () => {
-    return this.repository.find({ relations: ["address"] });
+    return this.repository.find({ relations: ["address", "department"] });
   };
 
   findOneBy = async (filter: Partial<Employee>) => {
-    return this.repository.findOne({ where: filter, relations: ["address"] });
+    return this.repository.findOne({
+      where: filter,
+      relations: ["address", "department"],
+    });
   };
 
   save = async (employee: Employee): Promise<Employee> => {

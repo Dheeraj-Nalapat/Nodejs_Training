@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryColumn,
@@ -13,6 +14,7 @@ import AbstractEntity from "./abstract-entity";
 import Address from "./address.entity";
 import { Role } from "../utils/role.enum";
 import Department from "./department.entity";
+import { join } from "path";
 
 @Entity()
 class Employee extends AbstractEntity {
@@ -38,7 +40,8 @@ class Employee extends AbstractEntity {
   address: Address;
 
   @ManyToOne(() => Department, (department) => department.employee)
+  @JoinColumn({ name: "department_name", referencedColumnName: "name" })
   department: Department;
 }
 
-export { Employee };
+export default Employee;
