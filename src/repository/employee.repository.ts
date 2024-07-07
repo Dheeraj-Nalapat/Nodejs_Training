@@ -18,14 +18,14 @@ class EmployeeRepository {
     return this.repository.save(employee);
   };
 
-  update = async (
-    filter: Partial<Employee>,
-    employeeUpdates: QueryDeepPartialEntity<Employee>
-  ): Promise<Employee> => {
-    const as = await this.repository.update(filter, employeeUpdates);
-    console.log(filter);
-    return this.findOneBy(filter);
-  };
+  // update = async (
+  //   filter: Partial<Employee>,
+  //   employeeUpdates: QueryDeepPartialEntity<Employee>
+  // ): Promise<Employee> => {
+  //   const as = await this.repository.update(filter, employeeUpdates);
+  //   console.log(filter);
+  //   return this.findOneBy(filter);
+  // };
 
   softDelete = async (id: number): Promise<void> => {
     await this.repository.softDelete({ id });

@@ -12,6 +12,7 @@ import { jwtPayload } from "../utils/jwtPayload";
 import { JWT_SECRET, JWT_VALIDITY } from "../utils/constants";
 import jsonwebtoken from "jsonwebtoken";
 import { CustomError } from "../utils/error.code";
+import { UpdateAddressDto } from "../dto/address.dto";
 
 class EmployeeService {
   constructor(private employeeRepository: EmployeeRepository) {}
@@ -45,13 +46,32 @@ class EmployeeService {
     return this.employeeRepository.save(newEmployee);
   };
 
-  updateEmployee = async (
-    id: number,
-    employeeUpdates: QueryDeepPartialEntity<Employee>
-  ) => {
-    const updateEmployee = this.getEmployeeById(id);
+  // updateEmployee = async (
+  //   id: number,
+  //   employeeUpdates: QueryDeepPartialEntity<Employee>
+  // ) => {
+  //   const updateEmployee = this.getEmployeeById(id);
 
-    return this.employeeRepository.update({ id }, employeeUpdates);
+  //   return this.employeeRepository.update({ id }, employeeUpdates);
+  // };
+
+  updateEmployeeById = async (
+    id: number,
+    name: string,
+    email: string,
+    age: number,
+    address: UpdateAddressDto
+  ) => {
+    const existingEmployee = await this.getEmployeeById(id);
+    existingEmployee.name = name;
+    existingEmployee.email = email;
+    existingEmployee.age = age;
+    if (address) {
+      existingEmployee.address.line1 = address.line1;
+      existingEmployee.address.pincode = address.pincode;
+    }
+
+    return this.employeeRepository.save(existingEmployee);
   };
 
   deleteEmployee = async (id: number) => {

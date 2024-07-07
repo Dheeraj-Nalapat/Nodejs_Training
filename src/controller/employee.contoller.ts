@@ -110,14 +110,12 @@ class EmployeeController {
         updateAddress.line1 = employeeDto.address.line1;
         updateAddress.pincode = employeeDto.address.pincode;
       }
-      const updatedEmployee = await this.employeeService.updateEmployee(
+      const updatedEmployee = await this.employeeService.updateEmployeeById(
         employeeId,
-        {
-          name: employeeDto.name,
-          email: employeeDto.email,
-          age: employeeDto.age,
-          address: employeeDto.address ? updateAddress : undefined,
-        }
+        employeeDto.name,
+        employeeDto.email,
+        employeeDto.age,
+        employeeDto.address ? updateAddress : undefined
       );
       if (!updatedEmployee) {
         const error = new HttpException(404, "Employee not found");
