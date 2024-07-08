@@ -31,15 +31,11 @@ describe("Employee Service", () => {
 
   it("should create expected employee", async () => {
     const mockEmployee = jest.fn(employeeRepository.save);
-    when(mockEmployee)
-      .calledWith(employeeTestCase[0])
-      .mockResolvedValue(employeeTestCase[0]);
+    mockEmployee.mockResolvedValue(employeeTestCase[0]);
     employeeRepository.save = mockEmployee;
 
     const mockDepartment = jest.fn(departmentService.getDepartmentByName);
-    when(mockDepartment)
-      .calledWith("Software Development")
-      .mockResolvedValue(departmentTestCase[0]);
+    mockDepartment.mockResolvedValue(departmentTestCase[0]);
     departmentService.getDepartmentByName = mockDepartment;
 
     const users = await employeeService.createEmployee(
@@ -74,5 +70,50 @@ describe("Employee Service", () => {
     const users = await employeeService.getEmployeeById(1);
     expect(users.name).toEqual("employee1");
     expect(mock).toHaveBeenCalledTimes(1);
+  });
+
+  it("should return the updated employee", async () => {
+    const mockFindoneBy = jest.fn(employeeRepository.findOneBy);
+    mockFindoneBy.mockResolvedValue(employeeTestCase[0]);
+    employeeRepository.findOneBy = mockFindoneBy;
+
+    const mockSave = jest.fn(employeeRepository.save);
+    mockSave.mockResolvedValue(employeeTestCase[1]);
+    employeeRepository.save = mockSave;
+
+    const mockGetDepartmentByName = jest.fn(
+      departmentService.getDepartmentByName
+    );
+    mockGetDepartmentByName.mockResolvedValue(undefined);
+    departmentService.getDepartmentByName = mockGetDepartmentByName;
+
+    const users = await employeeService.updateEmployeeById(
+      1,
+      "employee2",
+      undefined,
+      22,
+      undefined,
+      undefined,
+      undefined,
+      undefined
+    );
+    expect(users.age).toEqual(22);
+    expect(users.name).toEqual("employee2");
+    expect(mockFindoneBy).toHaveBeenCalledTimes(1);
+    expect(mockSave).toHaveBeenCalledTimes(1);
+  });
+
+  it("should return void promise", async () => {
+    const mockGetEmployeeWithId = jest.fn(employeeService.getEmployeeById);
+    mockGetEmployeeWithId.mockResolvedValue(employeeTestCase[0]);
+    employeeService.getEmployeeById = mockGetEmployeeWithId;
+
+    const mockSoftRemove = jest.fn(employeeRepository.softRemove);
+    mockSoftRemove.mockResolvedValue(null);
+    employeeRepository.softRemove = mockSoftRemove;
+
+    const users = await employeeService.deleteEmployee(1);
+    expect(users).toEqual(null);
+    expect(mockGetEmployeeWithId).toHaveBeenCalledTimes(1);
   });
 });

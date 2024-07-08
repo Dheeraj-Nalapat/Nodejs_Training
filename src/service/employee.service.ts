@@ -106,12 +106,11 @@ class EmployeeService {
       existingEmployee.address.pincode = address.pincode;
     }
 
-    const departmentRepository = dataSource.getRepository(Department);
-    const departmentEntity = await departmentRepository.findOneBy({
-      name: department,
-    });
+    const departmentEntity = await this.departmentService.getDepartmentByName(
+      department
+    );
 
-    if (!departmentEntity) {
+    if (department && !departmentEntity) {
       throw new EntityNotFoundException({
         CODE: "DEPARTMENT_NOT_FOUND",
         MESSAGE: "Department not found",
