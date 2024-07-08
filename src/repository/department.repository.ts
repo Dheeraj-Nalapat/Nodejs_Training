@@ -5,11 +5,14 @@ class DepartmentRepository {
   constructor(private repository: Repository<Department>) {}
 
   find = async () => {
-    return this.repository.find();
+    return this.repository.find({ relations: { employee: true } });
   };
 
   findOneBy = async (filter: Partial<Department>) => {
-    return this.repository.findOne({ where: filter });
+    return this.repository.findOne({
+      where: filter,
+      relations: { employee: true },
+    });
   };
 
   save = async (department: Department) => {

@@ -16,9 +16,14 @@ import { CreateAddressDto, UpdateAddressDto } from "../dto/address.dto";
 import { CreateDepartmentDto } from "../dto/department.dto";
 import Department from "../entity/department.entity";
 import dataSource from "../db/data-source.db";
+import DepartmentRepository from "../repository/department.repository";
+import DepartmentService from "./department.service";
 
 class EmployeeService {
-  constructor(private employeeRepository: EmployeeRepository) {}
+  constructor(
+    private employeeRepository: EmployeeRepository,
+    private departmentService: DepartmentService
+  ) {}
 
   getAllEmployee = async () => {
     return this.employeeRepository.find();
@@ -49,10 +54,9 @@ class EmployeeService {
     newAddress.pincode = address.pincode;
     newEmployee.address = newAddress;
 
-    const departmentRepository = dataSource.getRepository(Department);
-    const departmentEntity = await departmentRepository.findOneBy({
-      name: department,
-    });
+    const departmentEntity = await this.departmentService.getDepartmentByName(
+      department
+    );
 
     if (!departmentEntity) {
       throw new EntityNotFoundException({

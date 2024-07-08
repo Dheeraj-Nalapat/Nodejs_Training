@@ -10,9 +10,7 @@ const authorize = async (
   next: NextFunction
 ) => {
   try {
-    console.log("here");
     const token = getTokenFromRequestHeader(req);
-    console.log(token);
     const payload = jsonwebtoken.verify(token, JWT_SECRET);
 
     req.name = (payload as jwtPayload).name;

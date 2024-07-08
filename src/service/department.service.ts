@@ -5,6 +5,7 @@ import EntityNotFoundException from "../exceptions/entityNotFound.exception";
 import DepartmentRepository from "../repository/department.repository";
 import EmployeeRepository from "../repository/employee.repository";
 import { ErrorCodes } from "../utils/error.code";
+import EmployeeService from "./employee.service";
 
 class DepartmentService {
   constructor(private departmentRepository: DepartmentRepository) {}
@@ -44,10 +45,8 @@ class DepartmentService {
         MESSAGE: "Department not found",
       });
     }
-
-    const employeeRepository = dataSource.getRepository(Employee);
-    const employees = employeeRepository.findOneBy({ department });
-    if (employees) {
+    console.log(department.name);
+    if (department.employee.length > 0) {
       throw ErrorCodes.DELETION_CONSTRAINT_ERROR;
     }
     return this.departmentRepository.softRemove(id);

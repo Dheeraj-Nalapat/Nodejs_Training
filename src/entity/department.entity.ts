@@ -9,7 +9,6 @@ class Department extends AbstractEntity {
   name: string;
 
   @Column()
-  @IsOptional()
   head_id: number;
 
   @OneToMany(() => Employee, (employee) => employee.department)

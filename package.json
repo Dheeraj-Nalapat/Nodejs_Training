@@ -5,7 +5,7 @@
   "scripts": {
     "test": "jest",
     "test_clear": "jest --clearCache",
-    "test-coverage": "jest --coverage",
+    "test-coverage": "jest --coverage --testPathIgnorePatterns = src/db/migrations",
     "start-server": "npm run build && node dist/src/app.js",
     "introduction": "echo 'hello my name is Dheeraj'",
     "build": "rm -rf dist/ && tsc",

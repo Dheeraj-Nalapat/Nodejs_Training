@@ -40,7 +40,6 @@ class Employee extends AbstractEntity {
   address: Address;
 
   @ManyToOne(() => Department, (department) => department.employee)
-  @JoinColumn({ name: "department_name", referencedColumnName: "name" })
   department: Department;
 }
 

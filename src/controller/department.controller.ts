@@ -25,6 +25,7 @@ class DepartmentConroller {
     this.router.get("/", this.getAllDepartment);
     this.router.get("/:id", this.getDepartmentById);
     this.router.post("/", authorize, this.createDepartment);
+    this.router.put("/:id", authorize, this.updateDepartmentById);
     this.router.patch("/:id", authorize, this.updateDepartmentById);
     this.router.delete("/:id", authorize, this.deleteDepartment);
   }
