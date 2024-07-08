@@ -15,6 +15,7 @@ import { CustomError, ErrorCodes } from "../utils/error.code";
 import { CreateAddressDto, UpdateAddressDto } from "../dto/address.dto";
 import { CreateDepartmentDto } from "../dto/department.dto";
 import Department from "../entity/department.entity";
+import dataSource from "../db/data-source.db";
 
 class EmployeeService {
   constructor(private employeeRepository: EmployeeRepository) {}
@@ -34,7 +35,7 @@ class EmployeeService {
     password: string,
     role: Role,
     address: CreateAddressDto,
-    departmentEntity: Department
+    department: string
   ) => {
     const newEmployee = new Employee();
     newEmployee.name = name;
@@ -47,6 +48,18 @@ class EmployeeService {
     newAddress.line1 = address.line1;
     newAddress.pincode = address.pincode;
     newEmployee.address = newAddress;
+
+    const departmentRepository = dataSource.getRepository(Department);
+    const departmentEntity = await departmentRepository.findOneBy({
+      name: department,
+    });
+
+    if (!departmentEntity) {
+      throw new EntityNotFoundException({
+        CODE: "DEPARTMENT_NOT_FOUND",
+        MESSAGE: "Department not found",
+      });
+    }
 
     newEmployee.department = departmentEntity;
 
@@ -70,7 +83,7 @@ class EmployeeService {
     password: string,
     role: Role,
     address: UpdateAddressDto,
-    department?: Department
+    department: string
   ) => {
     const existingEmployee = await this.getEmployeeById(id);
     existingEmployee.name = name;
@@ -89,14 +102,31 @@ class EmployeeService {
       existingEmployee.address.pincode = address.pincode;
     }
 
+    const departmentRepository = dataSource.getRepository(Department);
+    const departmentEntity = await departmentRepository.findOneBy({
+      name: department,
+    });
+
+    if (!departmentEntity) {
+      throw new EntityNotFoundException({
+        CODE: "DEPARTMENT_NOT_FOUND",
+        MESSAGE: "Department not found",
+      });
+    }
+
     if (department) {
-      existingEmployee.department = department;
+      existingEmployee.department = departmentEntity;
     }
 
     return this.employeeRepository.save(existingEmployee);
   };
 
   deleteEmployee = async (id: number) => {
+    const employee = await this.getEmployeeById(id);
+
+    if (!employee) {
+      throw ErrorCodes.EMPLOYEE_WITH_ID_NOT_FOUND;
+    }
     return this.employeeRepository.softRemove(id);
   };
 

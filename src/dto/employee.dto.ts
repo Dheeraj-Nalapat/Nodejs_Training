@@ -42,9 +42,8 @@ export class CreateEmployeeDto {
   address: CreateAddressDto;
 
   @IsNotEmpty()
-  @ValidateNested({ each: true })
-  @Type(() => CreateDepartmentDto)
-  department: CreateDepartmentDto;
+  @IsString()
+  department: string;
 }
 
 export class UpdateEmployeeDto {
@@ -74,7 +73,6 @@ export class UpdateEmployeeDto {
   address: UpdateAddressDto;
 
   @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => UpdateDepartmentDto)
-  department: UpdateDepartmentDto;
+  @IsString()
+  department: string;
 }

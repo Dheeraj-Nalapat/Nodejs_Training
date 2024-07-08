@@ -1,7 +1,10 @@
+import dataSource from "../db/data-source.db";
 import Department from "../entity/department.entity";
 import Employee from "../entity/employee.entity";
+import EntityNotFoundException from "../exceptions/entityNotFound.exception";
 import DepartmentRepository from "../repository/department.repository";
 import EmployeeRepository from "../repository/employee.repository";
+import { ErrorCodes } from "../utils/error.code";
 
 class DepartmentService {
   constructor(private departmentRepository: DepartmentRepository) {}
@@ -33,6 +36,20 @@ class DepartmentService {
   };
 
   deleteDepartmentById = async (id: number) => {
+    const department = await this.getDepartmentById(id);
+
+    if (!department) {
+      throw new EntityNotFoundException({
+        CODE: "DEPARTMENT_NOT_FOUND",
+        MESSAGE: "Department not found",
+      });
+    }
+
+    const employeeRepository = dataSource.getRepository(Employee);
+    const employees = employeeRepository.findOneBy({ department });
+    if (employees) {
+      throw ErrorCodes.DELETION_CONSTRAINT_ERROR;
+    }
     return this.departmentRepository.softRemove(id);
   };
 }

@@ -130,29 +130,11 @@ class DepartmentConroller {
     next: express.NextFunction
   ) => {
     try {
-      console.log("here");
       const role = req.role;
       if (role != Role.CEO) {
         throw ErrorCodes.UNAUTHORIZED;
       }
       const departmentId = Number(req.params.id);
-      const department = await this.departmentService.getDepartmentById(
-        departmentId
-      );
-
-      if (!department) {
-        throw new EntityNotFoundException({
-          CODE: "DEPARTMENT_NOT_FOUND",
-          MESSAGE: "Department not found",
-        });
-      }
-
-      const employeeRepository = dataSource.getRepository(Employee);
-      const employees = employeeRepository.findOneBy({ department });
-      if (employees) {
-        throw ErrorCodes.DELETION_CONSTRAINT_ERROR;
-      }
-
       const deletedDepartment =
         await this.departmentService.deleteDepartmentById(departmentId);
       res.status(204).send(deletedDepartment);

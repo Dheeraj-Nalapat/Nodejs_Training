@@ -69,23 +69,10 @@ class EmployeeController {
       }
 
       const employeeDto = plainToInstance(CreateEmployeeDto, req.body);
-      console.log(employeeDto);
       const errors = await validate(employeeDto);
       if (errors.length) {
         console.log(errorsToJson(errors));
         throw new HttpException(400, JSON.stringify(errors));
-      }
-
-      const departmentRepository = dataSource.getRepository(Department);
-      const departmentEntity = await departmentRepository.findOneBy({
-        name: employeeDto.department.name,
-      });
-
-      if (!departmentEntity) {
-        throw new EntityNotFoundException({
-          CODE: "DEPARTMENT_NOT_FOUND",
-          MESSAGE: "Department not found",
-        });
       }
 
       const newEmployee = await this.employeeService.createEmployee(
@@ -95,7 +82,7 @@ class EmployeeController {
         employeeDto.password,
         employeeDto.role,
         employeeDto.address,
-        departmentEntity
+        employeeDto.department
       );
       res.status(201).send(newEmployee);
     } catch (err) {
@@ -128,18 +115,6 @@ class EmployeeController {
         updateAddress.pincode = employeeDto.address.pincode;
       }
 
-      const departmentRepository = dataSource.getRepository(Department);
-      const departmentEntity = await departmentRepository.findOneBy({
-        name: employeeDto.department.name,
-      });
-
-      if (!departmentEntity) {
-        throw new EntityNotFoundException({
-          CODE: "DEPARTMENT_NOT_FOUND",
-          MESSAGE: "Department not found",
-        });
-      }
-
       const updatedEmployee = await this.employeeService.updateEmployeeById(
         employeeId,
         employeeDto.name,
@@ -148,7 +123,7 @@ class EmployeeController {
         employeeDto.password,
         employeeDto.role,
         employeeDto.address ? updateAddress : undefined,
-        departmentEntity
+        employeeDto.department
       );
       if (!updatedEmployee) {
         throw ErrorCodes.EMPLOYEE_WITH_ID_NOT_FOUND;
@@ -170,11 +145,6 @@ class EmployeeController {
         throw ErrorCodes.UNAUTHORIZED;
       }
       const employeeId = Number(req.params.id);
-      const employee = await this.employeeService.getEmployeeById(employeeId);
-
-      if (!employee) {
-        throw ErrorCodes.EMPLOYEE_WITH_ID_NOT_FOUND;
-      }
       const deletedEmployee = await this.employeeService.deleteEmployee(
         employeeId
       );

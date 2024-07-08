@@ -7,6 +7,7 @@ Employee-Department
  ============================
  
  3. Define CRUD Operations for department and follow the proper folder structure.
+ ============================
  
  4. For department update/create, the core logic is to add or update employees to it
  
@@ -34,3 +35,24 @@ Employee-Department
  
  create department entity -
  create department dto -
+ 
+ {
+    "name":"Dheeraj Nalapat",
+    "email":"dheerajnalapat@gmail.com",
+    "age":22,
+    "password":"DheerajNalapat",
+    "Role":"DEVELOPER",
+    "address":{
+        "line1":"north lane",
+        "pincode":"676301"
+    },
+    "department":{
+        "name":"product development"
+    }
+}
+
+
+
+- to add check condition for age
+
+
