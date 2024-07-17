@@ -1,23 +1,17 @@
-import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
-import { UpdateEmployeeDto } from "../dto/employee.dto";
 import Address from "../entity/address.entity";
 import Employee from "../entity/employee.entity";
 import EmployeeRepository from "../repository/employee.repository";
 import { Role } from "../utils/role.enum";
 import bcrypt from "bcrypt";
-import { error } from "console";
 import IncorrectPasswordException from "../exceptions/incorrectPassword.exception";
 import EntityNotFoundException from "../exceptions/entityNotFound.exception";
 import { jwtPayload } from "../utils/jwtPayload";
 import { JWT_SECRET, JWT_VALIDITY } from "../utils/constants";
 import jsonwebtoken from "jsonwebtoken";
-import { CustomError, ErrorCodes } from "../utils/error.code";
+import { ErrorCodes } from "../utils/error.code";
 import { CreateAddressDto, UpdateAddressDto } from "../dto/address.dto";
-import { CreateDepartmentDto } from "../dto/department.dto";
-import Department from "../entity/department.entity";
-import dataSource from "../db/data-source.db";
-import DepartmentRepository from "../repository/department.repository";
 import DepartmentService from "./department.service";
+import { Status } from "../utils/status.enum";
 
 class EmployeeService {
   constructor(
@@ -26,28 +20,39 @@ class EmployeeService {
   ) {}
 
   getAllEmployee = async () => {
-    return this.employeeRepository.find();
+    const employees = await this.employeeRepository.find();
+    return employees.map((employee) => {
+      const { password, ...employeeWithoutPassword } = employee;
+      return employeeWithoutPassword;
+    });
   };
 
   getEmployeeById = async (id: number) => {
-    return this.employeeRepository.findOneBy({ id });
+    const employee = await this.employeeRepository.findOneBy({ id });
+    if (employee) {
+      const { password, ...employeeWithoutPassword } = employee;
+      return employeeWithoutPassword;
+    }
+    return null;
   };
 
   createEmployee = async (
     name: string,
     email: string,
-    age: number,
+    experience: number,
     password: string,
     role: Role,
+    status: Status,
     address: CreateAddressDto,
     department: string
   ) => {
     const newEmployee = new Employee();
     newEmployee.name = name;
     newEmployee.email = email;
-    newEmployee.age = age;
+    newEmployee.experience = experience;
     newEmployee.password = password ? await bcrypt.hash(password, 10) : "";
     newEmployee.role = role;
+    newEmployee.status = status;
 
     const newAddress = new Address();
     newAddress.line1 = address.line1;
@@ -70,29 +75,24 @@ class EmployeeService {
     return this.employeeRepository.save(newEmployee);
   };
 
-  // updateEmployee = async (
-  //   id: number,
-  //   employeeUpdates: QueryDeepPartialEntity<Employee>
-  // ) => {
-  //   const updateEmployee = this.getEmployeeById(id);
-
-  //   return this.employeeRepository.update({ id }, employeeUpdates);
-  // };
-
   updateEmployeeById = async (
     id: number,
     name: string,
     email: string,
-    age: number,
+    experience: number,
     password: string,
     role: Role,
+    status: Status,
     address: UpdateAddressDto,
     department: string
   ) => {
-    const existingEmployee = await this.getEmployeeById(id);
+    const existingEmployee = await this.employeeRepository.findOneBy({ id });
+    if (!existingEmployee) {
+      throw ErrorCodes.EMPLOYEE_WITH_ID_NOT_FOUND;
+    }
     existingEmployee.name = name;
     existingEmployee.email = email;
-    existingEmployee.age = age;
+    existingEmployee.experience = experience;
 
     if (password) {
       existingEmployee.password = password
@@ -100,6 +100,7 @@ class EmployeeService {
         : "";
     }
     existingEmployee.role = role;
+    existingEmployee.status = status;
 
     if (address) {
       existingEmployee.address.line1 = address.line1;

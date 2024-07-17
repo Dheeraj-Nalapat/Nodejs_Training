@@ -13,8 +13,6 @@ import { validate } from "class-validator";
 import authorize from "../middleware/authorize.middleware";
 import EntityNotFoundException from "../exceptions/entityNotFound.exception";
 import { ErrorCodes } from "../utils/error.code";
-import dataSource from "../db/data-source.db";
-import Employee from "../entity/employee.entity";
 
 class DepartmentConroller {
   public router: express.Router;
@@ -80,8 +78,7 @@ class DepartmentConroller {
         throw new HttpException(400, JSON.stringify(errors));
       }
       const newDepartment = await this.departmentService.createDepartment(
-        departmentDto.name,
-        departmentDto.head_id
+        departmentDto.name
       );
       res.status(201).send(newDepartment);
     } catch (err) {
@@ -110,8 +107,7 @@ class DepartmentConroller {
       const updatedDepartment =
         await this.departmentService.updateDepartmentById(
           departmentId,
-          departmentDto.name,
-          departmentDto.head_id
+          departmentDto.name
         );
       if (!updatedDepartment) {
         throw new EntityNotFoundException({

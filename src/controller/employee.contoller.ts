@@ -4,14 +4,11 @@ import EmployeeService from "../service/employee.service";
 import express from "express";
 import { CreateEmployeeDto, UpdateEmployeeDto } from "../dto/employee.dto";
 import { validate } from "class-validator";
-import { CreateAddressDto, UpdateAddressDto } from "../dto/address.dto";
+import { UpdateAddressDto } from "../dto/address.dto";
 import errorsToJson from "../../errorstojson";
 import { RequestWithUser } from "../utils/requestWithUser";
 import authorize from "../middleware/authorize.middleware";
 import { Role } from "../utils/role.enum";
-import Department from "../entity/department.entity";
-import dataSource from "../db/data-source.db";
-import EntityNotFoundException from "../exceptions/entityNotFound.exception";
 import { ErrorCodes } from "../utils/error.code";
 
 class EmployeeController {
@@ -78,9 +75,10 @@ class EmployeeController {
       const newEmployee = await this.employeeService.createEmployee(
         employeeDto.name,
         employeeDto.email,
-        employeeDto.age,
+        employeeDto.experience,
         employeeDto.password,
         employeeDto.role,
+        employeeDto.status,
         employeeDto.address,
         employeeDto.department
       );
@@ -119,9 +117,10 @@ class EmployeeController {
         employeeId,
         employeeDto.name,
         employeeDto.email,
-        employeeDto.age,
+        employeeDto.experience,
         employeeDto.password,
         employeeDto.role,
+        employeeDto.status,
         employeeDto.address ? updateAddress : undefined,
         employeeDto.department
       );

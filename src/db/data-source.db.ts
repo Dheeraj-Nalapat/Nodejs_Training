@@ -1,7 +1,6 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
-import Employee from "../entity/employee.entity";
 import dotenv from "dotenv";
 dotenv.config();
 

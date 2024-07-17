@@ -1,11 +1,7 @@
-import dataSource from "../db/data-source.db";
 import Department from "../entity/department.entity";
-import Employee from "../entity/employee.entity";
 import EntityNotFoundException from "../exceptions/entityNotFound.exception";
 import DepartmentRepository from "../repository/department.repository";
-import EmployeeRepository from "../repository/employee.repository";
 import { ErrorCodes } from "../utils/error.code";
-import EmployeeService from "./employee.service";
 
 class DepartmentService {
   constructor(private departmentRepository: DepartmentRepository) {}
@@ -22,23 +18,21 @@ class DepartmentService {
     return this.departmentRepository.findOneBy({ name });
   };
 
-  createDepartment = async (name: string, head_id: number) => {
+  createDepartment = async (name: string) => {
     const newDepartment = new Department();
     newDepartment.name = name;
-    newDepartment.head_id = head_id;
     return this.departmentRepository.save(newDepartment);
   };
 
-  updateDepartmentById = async (id: number, name: string, head_id: number) => {
+  updateDepartmentById = async (id: number, name: string) => {
     const existingDepartment = await this.getDepartmentById(id);
     existingDepartment.name = name;
-    existingDepartment.head_id = head_id;
     return this.departmentRepository.save(existingDepartment);
   };
 
   deleteDepartmentById = async (id: number) => {
     const department = await this.getDepartmentById(id);
-
+    console.log(department);
     if (!department) {
       throw new EntityNotFoundException({
         CODE: "DEPARTMENT_NOT_FOUND",

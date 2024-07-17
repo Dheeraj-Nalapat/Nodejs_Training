@@ -41,31 +41,44 @@ describe("Employee Service", () => {
     const users = await employeeService.createEmployee(
       employeeTestCase[0].name,
       employeeTestCase[0].email,
-      employeeTestCase[0].age,
+      employeeTestCase[0].experience,
       employeeTestCase[0].password,
       employeeTestCase[0].role,
+      employeeTestCase[0].status,
       employeeTestCase[0].address,
       employeeTestCase[0].department.name
     );
     expect(users.name).toEqual("employee1");
+    expect(users.email).toEqual("employee1@gmail");
+    expect(users.experience).toEqual(3);
+    expect(users.role).toEqual("DEVELOPER");
+    expect(users.status).toEqual("ACTIVE");
+    expect(users.address.line1).toEqual("address1");
+    expect(users.department.name).toEqual("Software Development");
+    expect(users.department).toEqual(departmentTestCase[0]);
     expect(mockEmployee).toHaveBeenCalledTimes(1);
     expect(mockDepartment).toHaveBeenCalledTimes(1);
   });
 
   it("should return all employees", async () => {
+    const employeeTestCaseWithoutPassword = employeeTestCase.map((employee) => {
+      const { password, ...employeeWithoutPassword } = employee;
+      return employeeWithoutPassword;
+    });
     const mock = jest
       .fn(employeeRepository.find)
       .mockResolvedValue(employeeTestCase);
     employeeRepository.find = mock;
 
     const users = await employeeService.getAllEmployee();
-    expect(users).toEqual(employeeTestCase);
+    expect(users).toEqual(employeeTestCaseWithoutPassword);
     expect(mock).toHaveBeenCalledTimes(1);
   });
 
   it("should return expected employee", async () => {
+    const { password, ...employeeWithoutPassword } = employeeTestCase[0];
     const mock = jest.fn();
-    when(mock).calledWith({ id: 1 }).mockResolvedValue(employeeTestCase[0]);
+    when(mock).calledWith({ id: 1 }).mockResolvedValue(employeeWithoutPassword);
     employeeRepository.findOneBy = mock;
     const users = await employeeService.getEmployeeById(1);
     expect(users.name).toEqual("employee1");
@@ -91,13 +104,14 @@ describe("Employee Service", () => {
       1,
       "employee2",
       undefined,
-      22,
+      4,
+      undefined,
       undefined,
       undefined,
       undefined,
       undefined
     );
-    expect(users.age).toEqual(22);
+    expect(users.experience).toEqual(4);
     expect(users.name).toEqual("employee2");
     expect(mockFindoneBy).toHaveBeenCalledTimes(1);
     expect(mockSave).toHaveBeenCalledTimes(1);

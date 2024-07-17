@@ -11,8 +11,7 @@ import { CreateAddressDto, UpdateAddressDto } from "./address.dto";
 import "reflect-metadata";
 import { Type } from "class-transformer";
 import { Role } from "../utils/role.enum";
-import Department from "../entity/department.entity";
-import { CreateDepartmentDto, UpdateDepartmentDto } from "./department.dto";
+import { Status } from "../utils/status.enum";
 
 export class CreateEmployeeDto {
   @IsNotEmpty()
@@ -26,7 +25,7 @@ export class CreateEmployeeDto {
 
   @IsNotEmpty()
   @IsNumber()
-  age: number;
+  experience: number;
 
   @IsNotEmpty()
   @IsString()
@@ -35,6 +34,10 @@ export class CreateEmployeeDto {
   @IsNotEmpty()
   @IsEnum(Role)
   role: Role;
+
+  @IsNotEmpty()
+  @IsEnum(Status)
+  status: Status;
 
   @IsNotEmpty()
   @ValidateNested({ each: true })
@@ -57,7 +60,7 @@ export class UpdateEmployeeDto {
 
   @IsOptional()
   @IsNumber()
-  age: number;
+  experience: number;
 
   @IsOptional()
   @IsString()
@@ -66,6 +69,10 @@ export class UpdateEmployeeDto {
   @IsOptional()
   @IsEnum(Role)
   role: Role;
+
+  @IsOptional()
+  @IsEnum(Status)
+  status: Status;
 
   @IsOptional()
   @ValidateNested({ each: true })
